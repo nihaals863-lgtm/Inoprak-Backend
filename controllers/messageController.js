@@ -505,7 +505,7 @@ const getAvailableUsers = async (req, res) => {
          FROM users u
          WHERE u.company_id = ? 
            AND u.id != ?
-           AND u.role IN ('CLIENT', 'EMPLOYEE')
+           AND u.role IN ('CLIENT', 'EMPLOYEE', 'ADMIN')
            AND u.is_deleted = 0
          ORDER BY u.role, u.name`,
         [companyId, userId]
@@ -528,15 +528,21 @@ const getAvailableUsers = async (req, res) => {
     }
     
     else if (userRole === 'EMPLOYEE') {
-      // Employee can ONLY message Admin users of their company
+      // Employee can message Admin and OTHER Employees of their company
       const [users] = await pool.execute(
-        `SELECT u.id, u.name, u.email, u.role
+        `SELECT u.id, u.name, u.email, u.role, u.name as display_name,
+                CASE 
+                  WHEN u.role = 'ADMIN' THEN 'Admin'
+                  WHEN u.role = 'EMPLOYEE' THEN 'Employee'
+                  ELSE u.role
+                END as role_display
          FROM users u
          WHERE u.company_id = ? 
-           AND u.role = 'ADMIN'
+           AND u.id != ?
+           AND u.role IN ('ADMIN', 'EMPLOYEE')
            AND u.is_deleted = 0
-         ORDER BY u.name`,
-        [companyId]
+         ORDER BY u.role, u.name`,
+        [companyId, userId]
       );
       availableUsers = users;
     }

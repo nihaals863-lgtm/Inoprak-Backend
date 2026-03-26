@@ -3,6 +3,7 @@
 // =====================================================
 
 const pool = require('../config/db');
+const settingsService = require('../services/settingsService');
 
 /**
  * Ensure companies table has all required columns
@@ -71,9 +72,15 @@ const getAll = async (req, res) => {
       params
     );
 
+    // Get default logo if needed
+    const defaultLogo = await settingsService.getSetting('company_logo', null);
+
     res.json({
       success: true,
-      data: companies
+      data: companies.map(c => ({
+        ...c,
+        logo: c.logo || defaultLogo
+      }))
     });
   } catch (error) {
     console.error('Get companies error:', error);
@@ -108,9 +115,14 @@ const getById = async (req, res) => {
       });
     }
 
+    const company = companies[0];
+    if (!company.logo) {
+      company.logo = await settingsService.getSetting('company_logo', null);
+    }
+
     res.json({
       success: true,
-      data: companies[0]
+      data: company
     });
   } catch (error) {
     console.error('Get company by ID error:', error);
@@ -352,6 +364,9 @@ const getCompanyWithDetails = async (req, res) => {
     }
 
     const company = companies[0];
+    if (!company.logo) {
+      company.logo = await settingsService.getSetting('company_logo', null);
+    }
 
     // Get linked contacts from company_contacts
     const [contacts] = await pool.execute(

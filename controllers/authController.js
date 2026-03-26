@@ -213,7 +213,8 @@ const getCurrentUser = async (req, res) => {
               e.department_id, e.position_id,
               d.name as department_name,
               p.name as position_name,
-              c.name as company_name
+              c.name as company_name,
+              u.timezone
        FROM users u
        LEFT JOIN employees e ON u.id = e.user_id
        LEFT JOIN departments d ON e.department_id = d.id
@@ -275,6 +276,7 @@ const getCurrentUser = async (req, res) => {
       position_id: user.position_id,
       position: user.position_name,
       company_name: user.company_name,
+      timezone: user.timezone,
       created_at: user.created_at
     };
 
@@ -301,7 +303,8 @@ const updateCurrentUser = async (req, res) => {
       name, email, phone, address,
       emergency_contact_name, emergency_contact_phone, emergency_contact_relation,
       bank_name, bank_account_number, bank_ifsc, bank_branch,
-      billing_address, billing_city, billing_state, billing_country, billing_postal_code
+      billing_address, billing_city, billing_state, billing_country, billing_postal_code,
+      timezone
     } = req.body;
 
     // Build update fields
@@ -385,6 +388,10 @@ const updateCurrentUser = async (req, res) => {
       updateFields.push('billing_postal_code = ?');
       updateValues.push(billing_postal_code || null);
     }
+    if (timezone !== undefined) {
+      updateFields.push('timezone = ?');
+      updateValues.push(timezone || 'Europe/Berlin');
+    }
 
     if (updateFields.length === 0) {
       return res.status(400).json({
@@ -407,7 +414,8 @@ const updateCurrentUser = async (req, res) => {
               u.bank_name, u.bank_account_number, u.bank_ifsc, u.bank_branch, u.created_at,
               e.department_id, e.position_id,
               d.name as department_name,
-              p.name as position_name
+              p.name as position_name,
+              u.timezone
        FROM users u
        LEFT JOIN employees e ON u.id = e.user_id
        LEFT JOIN departments d ON e.department_id = d.id
@@ -438,6 +446,7 @@ const updateCurrentUser = async (req, res) => {
       department: user.department_name,
       position_id: user.position_id,
       position: user.position_name,
+      timezone: user.timezone,
       created_at: user.created_at
     };
 

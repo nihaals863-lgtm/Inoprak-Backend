@@ -345,14 +345,15 @@ const getDefaultSettings = () => {
     { setting_key: 'company_name', setting_value: 'My Company' },
     { setting_key: 'company_email', setting_value: 'info@company.com' },
     { setting_key: 'system_name', setting_value: 'Worksuite CRM' },
-    { setting_key: 'default_currency', setting_value: 'USD' },
-    { setting_key: 'default_timezone', setting_value: 'UTC' },
+    { setting_key: 'default_currency', setting_value: 'EUR' },
+    { setting_key: 'default_timezone', setting_value: 'Europe/Berlin' },
     { setting_key: 'date_format', setting_value: 'Y-m-d' },
     { setting_key: 'time_format', setting_value: 'H:i' },
     { setting_key: 'fiscal_year_start', setting_value: '01-01' },
     { setting_key: 'session_timeout', setting_value: '30' },
     { setting_key: 'max_file_size', setting_value: '10' },
     { setting_key: 'allowed_file_types', setting_value: 'pdf,doc,docx,xls,xlsx,jpg,jpeg,png' },
+    { setting_key: 'company_logo', setting_value: '/uploads/default-logo.jpg' },
 
     // Localization
     { setting_key: 'default_language', setting_value: 'en' },
